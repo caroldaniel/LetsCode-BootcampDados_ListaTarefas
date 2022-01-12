@@ -23,11 +23,6 @@ A aplicação deve dispor de um menu com as seguintes opções para o usuário:
     - Você pode permitir que, no momento da criação de uma tarefa, o usuário possa digitar a data como sendo *hoje* ou *amanhã*, além do formato convencional (`dd/mm/aaaa`).
     - Você pode remover ou alterar o status de uma tafera com base no título e, também, na data (caso haja tarefas com o mesmo título); dessa forma, você evita remover tarefas que possuem o mesmo título.
 
-<aside>
-💡 Envie o link do repositório do projeto para o e-mail: `walisson.silva@letscode.com.br`.
-
-</aside>
-
 ## **Dicas**
 
 ### **1. Como posso obter as tarefas de hoje para exibi-las?**
