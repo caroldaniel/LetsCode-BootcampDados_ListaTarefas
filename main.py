@@ -1,83 +1,111 @@
 from source.Tarefas import Tarefas
-import csv
+from datetime import date
 
 #Inicio SetUp
-# Transformar o csv em uma lista
-arquivo = open('tarefas.csv')
-with open('tarefas.csv') as arquivo:
-  tabela = csv.reader(arquivo, delimiter=',', lineterminator='\n')
+tarefas = Tarefas('tarefas.csv')
 
-  conteudo = list(tabela)
-#Remover todas as listas vazia
-[conteudo.remove(i) for i in conteudo if i==[]]
-[conteudo.remove(i) for i in conteudo if i==[]]
-print(conteudo)
-#lista com tudo
-lista = conteudo
-#Fim SetUp
+# Funções de input
+def input_titulo_categoria() -> str:
+	titulo = input().strip().title()
+	return titulo
 
-#criar_nova_tarefa
+def input_data() -> str:
+	dia = input('Dia (DD): ')
+	while dia.isnumeric() == False or len(dia) != 2 or int(dia) <= 0 or int(dia) > 31:
+		dia = input('---Dia inválido!\nDia (DD): ')
+	mes = input('Mês (MM): ')
+	while mes.isnumeric() == False or len(mes) != 2 or int(mes) <= 0 or int(mes) > 12:
+		mes = input('---Mês inválido!\nMês (MM): ')
+	ano = input('Ano (AAAA): ')
+	while ano.isnumeric() == False or len(ano) != 4 or int(ano) <= 1900 or int(ano) > 2500:
+		ano = input('---Ano inválido!\nAno (AAAA): ')
+	return (f'{ano}/{mes}/{dia}')
+
+# Funções do menu
+## Criar nova tarefa
 def nova_tarefa():
-    titulo = input('Digite o título para a tarefa: ')
-    data = input('Digite a data que ela deva ser concluída (AAAA/MM/DD): ')
-    categoria = input('Digite a categoria da tarefa: ')
-    pendente = 'Pendente'
-    nova_tarefa = [titulo, data, categoria, pendente]
-    lista.append(nova_tarefa)
-
-#visualizar as tarefas de um dia
+	print('Digite o título da tarefa: ', end='')
+	titulo = input_titulo_categoria()
+	print('Digite a data para conclusão da tarefa: ')
+	data = input_data()
+	print('Digite a categoria da tarefa: ', end='')
+	categoria = input_titulo_categoria()
+	pendente = 'Pendente'
+	ok = tarefas.adicionar(titulo, data, categoria, pendente)
+	if ok == False:
+		print('Tarefa de mesmo nome e data já existe na lista de tarefas!')
+    
+## Visualizar tarefas por data
 def visualizar():
-    data = input('Qual a data: ')
-    for i in lista:
-        if data in i:
-            print(i)
+	print(f'''Deseja visualizar tarefas de Hoje, pesquisar por Data ou mostrar Todas?
+	Se [H], a pesquisa retornará as tarefas do dia de hoje;
+	Se [D], a pesquisa retornará as tarefas da data especificada;
+	Se [T], a pesquisa retornará todas as tarefas da lista.
+	''')
+	opcao = input('(H/D/T)\n').strip().upper()
+	while opcao != 'H' and opcao != 'D' and opcao != 'T':
+		opcao = input('Opção inválida!\n(H/D/T)').strip().upper()
+	if opcao == 'H':
+		hoje = date.today()
+		data = f'{hoje.year:04.0f}/{hoje.month:02.0f}/{hoje.day:02.0f}'
+		lista = tarefas.visualizar_data(data)
+		print(lista)
+	elif opcao == 'D':
+		data = input_data()
+		lista = tarefas.visualizar_data(data)
+		print(lista)
+	else:
+		lista = tarefas.visualizar_todas()
+		print(lista)
 
 #alterar o status baseado no titulo
 def alterar_status():
-    titulo = input('Qual o titulo da tarefa: ')
-    for i in lista:
-        if titulo in i:
-            if i[3] == 'Pendente':
-                i[3] = 'Concluído'
-            else:
-                i[3] = 'Pendente'
+	print('Digite o título da tarefa: ', end='')
+	titulo = input_titulo_categoria()
+	print('Digite a data para conclusão da tarefa: ')
+	data = input_data()
+	ok = tarefas.alterar_status(titulo, data)
+	if ok == False:
+		print('Tarefa não encontrada!')
 
 #remover uma tarefa das lista baseada no titulo
 def remover_tarefa():
-    titulo = input('Qual o titulo: ')
-    for i in lista:
-        if titulo in i:
-            lista.remove(i)
-        
-def fechar_programa():
-	lista_Tarefas = Tarefas('tarefas.csv')
-	for i in range(len(lista)):
-		titulo =  lista[i][0]
-		data = lista[i][1]
-		categoria = lista[i][2]
-		status = lista[i][3]
-		lista_Tarefas.adicionar(titulo,data,categoria,status)
-	lista_Tarefas.fechar()
-           
-#MainMenu
-comando = 'False'
-while comando!= '5':
-    print('\n1. Adicionar tarefa \n2. Alterar status da Tarefa \n3. Remover tarefa \n4. Visualizar tarefas \n5. Fechar \n')
-    comando = input('Escolha uma opção: ')
-    if comando == '1':
-        print('Adicionar')
-        nova_tarefa()
-    elif comando =='2':
-        print('Alterar')
-        alterar_status()
-    elif comando =='3':
-        print('Remover')
-        remover_tarefa()
-    elif comando =='4':
-        print('Visualizar')
-        visualizar()
-    elif comando =='5':
-        print('Fechar')
-        fechar_programa()
-    else:
-        print('Escolhar uma opção válida! [1 2 3 4 5]')
+	print('Digite o título da tarefa: ', end='')
+	titulo = input_titulo_categoria()
+	print('Digite a data para conclusão da tarefa: ')
+	data = input_data()
+	ok = tarefas.remover(titulo, data)
+	if ok == False:
+		print('Tarefa não encontrada!')
+                   
+# Main Menu
+def main():
+	while True:
+		comando = input(f'''\n--- DIGITE UMA OPÇÃO PARA PROSSEGUIR
+[1] Adicionar tarefa
+[2] Alterar status da tarefa
+[3] Remover tarefa
+[4] Visualizar todas as tarefas 
+[5] Fechar programa
+
+OPÇÃO: ''')
+		if comando == '1':
+			print('ADICIONAR TAREFA\n')
+			nova_tarefa()
+		elif comando =='2':
+			print('ALTERAR STATUS DA TAREFA\n')
+			alterar_status()
+		elif comando =='3':
+			print('REMOVER TAREFA\n')
+			remover_tarefa()
+		elif comando =='4':
+			print('VISUALIZAR LISTA\n')
+			visualizar()
+		elif comando =='5':
+			print('FECHAR PROGRAMA\n')
+			break
+		else:
+			print('OPÇÃO INVÁLIDA\n')
+
+# Execução do programa
+main()
