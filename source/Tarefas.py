@@ -67,6 +67,15 @@ class Tarefas:
 			w.writerows(lista)
 		return alterado
 	
+	def visualizar_status(self, status:str) -> list:
+		lista = []
+		with open(self.file_url, "r") as read_file:
+			r = csv.reader(read_file)
+			for row in r:
+				if row[3] == status:
+					lista.append(row)
+		return lista
+
 	def visualizar_data(self, data:str) -> list:
 		lista = []
 		with open(self.file_url, "r") as read_file:
